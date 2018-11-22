@@ -7,7 +7,8 @@ export default class News extends Component {
         this.state = {
             loaded: false,
             news: [],
-            error: false
+            error: false,
+            load: false
         }
     }
     handleObserver = () => {
@@ -47,8 +48,13 @@ export default class News extends Component {
                     this.state.news.length > 0 ? this.state.news.map((n, i) => {
                         return (
                             <div id={i} className="news">
-                                <img src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" class="newsImage"></img>
-                                <div className="newsDesc">{n.title}</div>
+                                <div className="newsInner">
+                                    <img src="https://img1a.flixcart.com/www/linchpin/batman-returns/images/fk-default-image-75ff34.png" class="newsImage"></img>
+                                    <div>
+                                    <div className="newsTitle">{n.title}</div>
+                                    <div className="newsDesc">{n.desc}</div>
+                                </div>
+                                </div>
                             </div>
                         )
                     }) : null
@@ -56,13 +62,13 @@ export default class News extends Component {
             {
                 this.state.error ?
                     <div className="offline">
-                        ભાઈ ઇન્ટરનેટ ચાલુ કર!
+                        There no internet connection!
                     </div>
                 :null
             }
-            <div ref="loading" className="loading">
-                <div className="loader"></div>
-            </div>
+                        <div ref="loading" className="loading">
+                            <div className="loader"></div>
+                        </div>
             </div>
         );
     }
