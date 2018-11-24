@@ -8,43 +8,109 @@ import savedIcon from "./images/round-favorite-24px.svg";
 import saveDataIcon from "./images/round-flash_on-24px.svg";
 import notificationIcon from "./images/round-notifications-24px.svg";
 import homeScreenIcon from "./images/round-add_to_home_screen-24px.svg";
+import doneIcon from "./images/round-done_outline-24px.svg";
+import reloadIcon from "./images/round-autorenew-24px.svg";
+import Hammer from "hammerjs";
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       menuOpen: false,
       dataSaver: null,
-      notificationEnable: false
+      notificationEnable: false,
+      uptodate: false
     }
   }
-  
+  r;
   componentDidMount() {
+    var explore = document.querySelector(".explore");
+    var manager = new Hammer(explore);
+    manager.on("panup", (e)=> {
+      console.log("top" + e.center.y)
+     explore.style = `transform: translateY(-${e.center.y});`;
+    })
+    manager.on("pandown", (e) => {
+      console.log(e);
+      console.log("bottom" + e.center.y)
+      if(e.center.y==0) {
+        this.closeMenu();
+      }
+      else {
+     explore.style = `transform: translateY(${e.center.y});`;
+     this.closeMenu();
+      }
+    })
+     if ('serviceWorker' in navigator) {
+       window.addEventListener('load', () => {
+         navigator.serviceWorker.register('/sw.js')
+           .then(registration => {
+             if (registration.waiting) {
+               // waiting 
+               this.r = registration;
 
+              this.setState({uptodate: false});
+
+             } else {
+               this.setState({
+                 uptodate: true
+               });
+               console.log(`Service Worker registered! Scope: ${registration.scope}`);
+             }
+           })
+           .catch(err => {
+             console.log(`Service Worker registration failed: ${err}`);
+           });
+       });
+       if(localStorage.getItem("ne")=="true") {
+         this.setState({"notificationEnable": true})
+       }
+     }
+  
+    window.addEventListener("scroll", this.handleScroll.bind(this));
     if (localStorage.getItem("dsm") == "true") {
       this.setState({ "dataSaver": true })
     }
-    this.askPermission()
-    .then((_r)=>{
-      if(localStorage.getItem("ne")=="true") {
-      this.setState({notificationEnable: true})
+  }
+
+  handleUpdate = () => {
+        //       registration.waiting.postMessage('skipWaiting');
+        if(this.r) {
+          this.r.waiting.postMessage('skipWaiting');
+        }
+      
+      window.location.reload();
+  }
+
+  prevStatus = 0;
+  handleScroll = (e) => {
+ 
+      setTimeout(()=> {
+          this.prevStatus = window.scrollY;
+      }, 250)
+      
+      if (this.prevStatus < 72) {
+          document.querySelector(".header").style = "position: relative";
       }
-    })
-    .catch((_e)=> {
-      this.setState({notificationEnable: false})
-    })
+      else {
+        if (this.prevStatus > window.scrollY) {
+          document.querySelector(".header").style = `position: sticky;top:0;animation: scroll 250ms;`;
+        }
+        else {
+          document.querySelector(".header").style = "display: none";
+        }
+
+      }
   }
   closeMenu = () => {
     if(this.state.menuOpen) {
       document.body.style = "overflow: scroll";
-      document.querySelector(".header").style = "position: sticky";
       document.querySelector(".newsMain").style = "position: relative;top: 0px;"
       this.setState({ menuOpen: false });
     }
   }
   openMenu = () => {
     document.body.style = "overflow: hidden";
-    document.querySelector(".header").style = "position: fixed";
-    document.querySelector(".newsMain").style = "position: relative;top: 56px;"
+    document.querySelector(".newsMain").style = "position: relative;"
     this.setState({ menuOpen: true });
   }
   saveData = () => {
@@ -79,6 +145,7 @@ class App extends Component {
       })
     })
   }
+  
   handleNotification = () => {
     if(this.state.notificationEnable) {
       // send req to server to remove push key.
@@ -141,7 +208,8 @@ class App extends Component {
                 <button className="othermenubutton"><span className="menuIcon"><img src={savedIcon}></img></span><span style={{ paddingLeft: "16px" }}>Saved</span></button>
                 <button className="othermenubutton bb notPlusIcon" onClick={() => this.saveData()}><div><span className="menuIcon"><img src={saveDataIcon}></img></span><span style={{ paddingLeft: "16px" }}>Data Saving mode</span></div><div className="switch"><div className="switchHead" style={this.state.dataSaver ? headMove : null}></div><div className="switchPath" style={this.state.dataSaver ? pathMove : null}></div></div></button>
                 <button className="othermenubutton notPlusIcon" onClick={() => this.handleNotification()}><div><span className="menuIcon"><img src={notificationIcon}></img></span><span style={{ paddingLeft: "16px" }}>Allow Notifications</span></div><div className="switch"><div className="switchHead" style={this.state.notificationEnable ? headMove : null}></div><div className="switchPath" style={this.state.notificationEnable ? pathMove : null}></div></div></button>
-                <button className="othermenubutton"><span className="menuIcon"><img src={homeScreenIcon}></img></span><span style={{ paddingLeft: "16px" }}>Add to Homescreen</span></button>
+                <button className="othermenubutton bb"><span className="menuIcon"><img src={homeScreenIcon}></img></span><span style={{ paddingLeft: "16px" }}>Add to Homescreen</span></button>
+                <button className="othermenubutton" onClick={()=>this.handleUpdate()}><span className="menuIcon"><img src={this.state.uptodate?doneIcon:reloadIcon}></img></span><span style={{ paddingLeft: "16px" }}>{this.state.uptodate ? "Version 2.2.0": "Reload to Update"}</span></button>
             </div>
           </div>
         </div>

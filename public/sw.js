@@ -6,5 +6,20 @@ if (workbox) {
     workbox.precaching.precacheAndRoute([]);
 
 } else {
-    console.log(`Boo! Workbox didn't load 😬`);
+    console.log(`😬 UHj!`);
 }
+
+self.addEventListener('message', (event) => {
+    if (!event.data) {
+        return;
+    }
+
+    switch (event.data) {
+        case 'skipWaiting':
+            self.skipWaiting();
+            break;
+        default:
+            // NOOP
+            break;
+    }
+});

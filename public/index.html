@@ -7,6 +7,8 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,600" rel="stylesheet">
     <title>Newsapp</title>
+    <link rel="preconnect" href="https://img1a.flixcart.com">
+    <link rel="preconnect" href="https://orchid-brian.glitch.me">
     <meta name="theme-color" content="#1565C0">
     <style>
       body {
@@ -20,18 +22,5 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-              console.log(`Service Worker registered! Scope: ${registration.scope}`);
-            })
-            .catch(err => {
-              console.log(`Service Worker registration failed: ${err}`);
-            });
-        });
-      }
-    </script>
   </body>
 </html>
