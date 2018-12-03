@@ -6,7 +6,7 @@ if (workbox) {
     workbox.precaching.precacheAndRoute([]);
 
 } else {
-    console.log(`😬 UHj!`);
+    console.log(`😬 UH!`);
 }
 
 self.addEventListener('message', (event) => {

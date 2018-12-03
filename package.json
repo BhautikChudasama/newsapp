@@ -4,8 +4,11 @@
   "private": true,
   "dependencies": {
     "hammerjs": "^2.0.8",
+    "history": "^4.7.2",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
     "sw-toolbox": "^3.6.0"
   },

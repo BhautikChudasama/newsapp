@@ -11,6 +11,9 @@ import homeScreenIcon from "./images/round-add_to_home_screen-24px.svg";
 import doneIcon from "./images/round-done_outline-24px.svg";
 import reloadIcon from "./images/round-autorenew-24px.svg";
 import Hammer from "hammerjs";
+import ExploreNewsSkeleton from "./skeletons/news";
+import { Router, Route, Switch } from 'react-router-dom'
+import history from "./history.js";
 class App extends Component {
   constructor(props) {
     super(props);
@@ -18,10 +21,18 @@ class App extends Component {
       menuOpen: false,
       dataSaver: null,
       notificationEnable: false,
-      uptodate: false
+      uptodate: false,
+      isAuth: false,
+      isDesc: null
     }
   }
+  /**
+   * INFO:
+   * /headline/e/id?from=newsapp&ref=false
+   */
   r;
+  
+
   componentDidMount() {
     var explore = document.querySelector(".explore");
     var manager = new Hammer(explore);
@@ -70,6 +81,16 @@ class App extends Component {
     if (localStorage.getItem("dsm") == "true") {
       this.setState({ "dataSaver": true })
     }
+      if(window.location.pathname == "/") {
+
+      this.setState({
+        isDesc: false
+      }) }
+      else {
+       this.setState({
+        isDesc: true
+      });
+    }
   }
 
   handleUpdate = () => {
@@ -89,29 +110,30 @@ class App extends Component {
       }, 250)
       
       if (this.prevStatus < 72) {
-          document.querySelector(".header").style = "position: relative";
+          document.querySelector(".headerMain").style = "position: relative";
       }
       else {
         if (this.prevStatus > window.scrollY) {
-          document.querySelector(".header").style = `position: sticky;top:0;animation: scroll 250ms;`;
+          document.querySelector(".headerMain").style = `position: sticky;top:0;animation: scroll 250ms;`;
         }
         else {
-          document.querySelector(".header").style = "display: none";
+          document.querySelector(".headerMain").style = "display: none";
         }
 
       }
   }
   closeMenu = () => {
     if(this.state.menuOpen) {
-      document.body.style = "overflow: scroll";
-      document.querySelector(".newsMain").style = "position: relative;top: 0px;"
       this.setState({ menuOpen: false });
+      document.body.style = "overflow-y: scroll";
+      // document.querySelector(".newsMain").style = "position: relative;top: 0px;"
+      
     }
   }
   openMenu = () => {
-    document.body.style = "overflow: hidden";
-    document.querySelector(".newsMain").style = "position: relative;"
     this.setState({ menuOpen: true });
+    document.body.style = "overflow: hidden";
+    // document.querySelector(".newsMain").style = "position: relative;"
   }
   saveData = () => {
     let dsmStatus = localStorage.getItem("dsm");
@@ -169,7 +191,9 @@ class App extends Component {
     })
     }
   }
+  
   render() {
+   
     const backMenu = {
       transform: "translateY(100%)"
     }
@@ -191,19 +215,31 @@ class App extends Component {
     const pathMove = {
       background: "#95baf8"
     }
+   
     return (
+    
       <>
       <div className="app" style={this.state.menuOpen ? fix : null}>
       <div className="exploreBackground" onClick={()=>this.closeMenu()} style={this.state.menuOpen?null:none}></div>
-        <Header />
-        <News />
+        <Header  now={this.state.isDesc?"/o":"/"}/>
+          <Router history={history}>
+            <div>
+            <Route path="/" component={News} exact></Route>
+            <Route path="/:headline/e/:id" component={ExploreNewsSkeleton}></Route>
+            </div>
+          </Router>
+        
           <button className="menuButton" onClick={() => this.openMenu()} style={this.state.menuOpen ? none : null}><img src={menu} /><span>Explore</span></button>
         <div className="explore" style={this.state.menuOpen?forwardMenu:backMenu}>
           <div className="exploreInner">
             <div className="exploreList">
               <div className="exploreProfile">
-                <div className="profileImage"></div><div style={{paddingLeft: "12px"}}>Bhautik Chudasama</div>
-              </div>
+                {
+                  this.state.isAuth?<div className="signed"><div><div className="profileImage"></div><div style={{paddingLeft: "12px"}}>Bhautik Chudasama</div></div><button className="signOut" style={{marginRight: "17px"}}>Logout</button></div>
+                  : 
+                      <div className="notSignin"><img style={{background: "transparent"}} src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/32px-Google_%22G%22_Logo.svg.png" className="profileImage notSign"></img> <div style={{ paddingLeft: "12px" }}>Signin with Google</div></div>
+                }
+                </div>
                 <button className="othermenubutton"><span className="menuIcon"><img src={homeIcon}></img></span><span style={{ paddingLeft: "16px" }}>Home</span></button>
                 <button className="othermenubutton"><span className="menuIcon"><img src={savedIcon}></img></span><span style={{ paddingLeft: "16px" }}>Saved</span></button>
                 <button className="othermenubutton bb notPlusIcon" onClick={() => this.saveData()}><div><span className="menuIcon"><img src={saveDataIcon}></img></span><span style={{ paddingLeft: "16px" }}>Data Saving mode</span></div><div className="switch"><div className="switchHead" style={this.state.dataSaver ? headMove : null}></div><div className="switchPath" style={this.state.dataSaver ? pathMove : null}></div></div></button>

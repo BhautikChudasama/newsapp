@@ -1,3 +1,7 @@
+.menuButton {
+    display: none;
+}
+
 div homeS {
     display: block;
 }
@@ -52,5 +56,70 @@ div homeS {
             120px 40px,
             120px 60px,
             120px 80px;
+    }
+}
+
+/*
+    NEWS fetching
+    ////
+*/
+.newsDescS {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.newsImageS {
+       width: 100%;
+       height: 220px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       background: #fff;
+}
+.newsS {
+     margin: 40px auto;
+     width: 90%;
+    height: 200px;
+     /* change height to see repeat-y behavior */
+
+     background-image:
+     linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 40%),
+     linear-gradient(lightgray 25px, transparent 0),
+     linear-gradient(lightgray 10px, transparent 0),
+     linear-gradient(lightgray 10px, transparent 0),
+     linear-gradient(lightgray 10px, transparent 0);
+     background-repeat: no-repeat;
+
+     background-size:
+     /* circle */
+     50px 100px,
+     /* highlight */
+     /* WIDTH AND HEIGHT */
+       300px 100px,
+     250px 200px,
+   200px 200px,
+     200px 50px;
+     
+     background-position: 
+     /* circle */
+     0 0,
+     /* highlight */
+     10px 20px,
+     10px 80px,
+     10px 60px,
+     10px 100px;
+     animation: shineS 1s infinite;
+     margin-top: 10px;
+}
+@keyframes shineS {
+    to {
+        background-position:
+            
+            120% 0,
+            /* move highlight to right */
+           10px 20px,
+           10px 80px,
+           10px 60px,
+           10px 100px;
     }
 }
