@@ -11,8 +11,8 @@ import homeScreenIcon from "./images/round-add_to_home_screen-24px.svg";
 import doneIcon from "./images/round-done_outline-24px.svg";
 import reloadIcon from "./images/round-autorenew-24px.svg";
 import Hammer from "hammerjs";
-import ExploreNewsSkeleton from "./skeletons/news";
-import { Router, Route, Switch } from 'react-router-dom'
+import NewsDescription from "./newsDescription/newsDescription";
+import { Router, Route } from 'react-router-dom'
 import history from "./history.js";
 class App extends Component {
   constructor(props) {
@@ -110,14 +110,31 @@ class App extends Component {
       }, 250)
       
       if (this.prevStatus < 72) {
-          document.querySelector(".headerMain").style = "position: relative";
+          if(window.location.pathname=="/") {
+            document.querySelector(".headerMain").style = "position: relative";
+          }
+          else {
+            document.querySelector(".header").style = "position: relative";
+          }
+          
       }
       else {
         if (this.prevStatus > window.scrollY) {
-          document.querySelector(".headerMain").style = `position: sticky;top:0;animation: scroll 250ms;`;
+          if(window.location.pathname=="/") {
+            document.querySelector(".headerMain").style = `position: sticky;top:0;animation: scroll 250ms;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.5)`;
+          }
+          else {
+            document.querySelector(".header").style = `position: sticky;top:0;animation: scroll 250ms;     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.5)`;
+          }
+          
         }
         else {
-          document.querySelector(".headerMain").style = "display: none";
+          if(window.location.pathname=="/") {
+            document.querySelector(".headerMain").style = "display: none";
+          }
+          else {
+            document.querySelector(".header").style = "display: none";
+          }
         }
 
       }
@@ -225,7 +242,7 @@ class App extends Component {
           <Router history={history}>
             <div>
             <Route path="/" component={News} exact></Route>
-            <Route path="/:headline/e/:id" component={ExploreNewsSkeleton}></Route>
+            <Route path="/:headline/e/:id" component={NewsDescription}></Route>
             </div>
           </Router>
         

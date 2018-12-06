@@ -78,19 +78,14 @@ class Header extends React.Component{
           <div className={this.state.isDesc?"header":"headerMain"} ref={this.state.isDesc?null:"header"} >
             {
                   this.state.isDesc ?
-                  <>
-                              <Router history={History}> 
-                              
-                                  <div><Link to="/"><button className="closeButton" title="Close" ><img src={closeIcon} alt="" srcset="" /></button></Link></div>
-                                      
-                                     
-                                  </Router>
-                          <button className="closeButton" title="Save to offline" onClick={(e) => this.saveToOffline()}><img src={this.state.hasLike ? filledHeart : unfillheart} alt="like" className="like" /></button>   
-                    
-                       
-                    
-                     
-                      </>
+                    <>
+                        <Router history={History}> 
+                            <div>
+                                <Link to="/"><button className="closeButton" title="Close" ><img src={closeIcon} alt="" srcset="" /></button></Link>
+                            </div>
+                        </Router>
+                        <button className="closeButton" title="Save to offline" onClick={(e) => this.saveToOffline()}><img src={this.state.hasLike ? filledHeart : unfillheart} alt="like" className="like" /></button>   
+                    </>
                   : <div>
                       newapp
             </div>
