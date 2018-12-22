@@ -3,6 +3,8 @@ import HomeSkeleton from "../skeletons/home";
 import "./news.css";
 import noData from "../images/undraw_before_dawn_bqrj.svg";
 import { Link } from "react-router-dom";
+import Header from "../header/header";
+import Newsplaceholder from "../images/newsplaceholder.png";
 export default class News extends Component {
     constructor(props) {
         super(props);
@@ -11,40 +13,78 @@ export default class News extends Component {
             news: [],
             error: false,
             load: false,
-            reload: false
+            reload: false,
+            IsDataSaver: false,
+            end: false,
+            processing: true
         }
        
     }
-    
+    lts;
     handleObserver = () => {
-        fetch("https://newsap-frtstondwali.glitch.me/news")
-            .then((res) => res.json())
-            .then((json) => {
-                this.setState({ news: [...this.state.news, ...json], loaded: true });
-                console.log(this.state.news.length);
-            })
-            .catch((err) => this.setState({ loaded: true, error: true}));
+        if(this.state.processing) {   
+            return ;
+        }     
+        else {
+        if (localStorage.getItem("dsm") == "true") {
+            this.setState({ IsDataSaver: true });
+        }
+        else {
+            this.setState({ IsDataSaver: false });
+        }
+        if(this.lts==0) {
+            return ;
+        }
+        else {
+            console.log(this.lts);
+            fetch(`https://newsap-frtstondwali.glitch.me/fetch/?lts=${this.lts}`)
+                .then((res) => res.json())
+                .then((json) => {
+                    this.setState({processing: false})
+                    if(json.length==0) {
+                    this.setState({end: true});
+                    document.querySelector(".loading").style = "display: none";
+                    }
+                    else {
+                        this.lts = json[json.length - 1].data.ts;
+                        this.setState({ news: [...this.state.news, ...json], loaded: true });
+                    }
+                })
+                .catch((err) => {console.log(err);this.setState({ loaded: true, error: true})});
+            }
+        }
     }
-    componentDidMount() {       
-        fetch("https://newsap-frtstondwali.glitch.me/news")
-        .then((res)=>res.json())
-        .then((json)=>{
-            this.setState({news: json, loaded: true});
-        })
+    componentDidMount() {   
+        if(localStorage.getItem("dsm")=="true") {
+            this.setState({IsDataSaver: true});
+        }    
+        else {
+            this.setState({ IsDataSaver: false });
+        }
+        fetch("https://newsap-frtstondwali.glitch.me/fetch/?lts")
+            .then((res) => res.json())
+            .then((json) =>{
+             this.lts = json[json.length-1].data.ts;
+             this.setState({processing: false});
+             this.setState({news: [...this.state.news, ...json], loaded: true})
+            })
+
         .catch((err)=> {
             document.querySelector(".loading").style = "display: none";
             this.setState({loaded: true, error: true, reload: true})
         });
 
         var io = new IntersectionObserver(entries => {
-            /* ... */
-            this.handleObserver();
-        }, {
-                root: null,
-                rootMargin: "0px",
-                threshold: 1.0
-            });
-        io.observe(this.refs.loading);
+           
+        this.handleObserver();
+        },
+        {
+            root: null,
+            rootMargin: "0px",
+            threshold: 1.0
+        });
+            
+        io.observe(this.refs.loading)  
     }
     reload = () => {
         window.location.reload();
@@ -52,25 +92,34 @@ export default class News extends Component {
     render() {
         return (
             <div ref="newsMain" className="newsMain">
+            <Header  now={this.state.isDesc?"/o":"/"}/>
             {
                 this.state.loaded ? null : <HomeSkeleton />
             }
             {
                     this.state.news.length > 0 ? this.state.news.map((n, i) => {
                         return (
-                            <Link to={"/"+n.title+"/e/"+i}>
-                            <div id={i} className="news">
+                            <Link to={"/"+n.data.title+"/e/"+n.id} key={`${n.id}`}>
+                            <div id={n.id} className="news">
                                 <div className="newsInner">
-                                    <img src="https://img1a.flixcart.com/www/linchpin/batman-returns/images/fk-default-image-75ff34.png" class="newsImage"></img>
+                                        <img src={this.state.IsDataSaver == false ? n.data.uri[1].uri : Newsplaceholder} className="newsImage" id={`sid${n.id}`} onLoad={() => { document.querySelector(`#is${n.id}`).style = "display: none"; document.querySelector(`#sid${n.id}`).style = "display: block" }} ></img>
+                                        <img src={Newsplaceholder} className={"imageSkeleton"} id={`is${n.id}`}></img>
                                     <div>
-                                    <div className="newsTitle">{n.title}</div>
-                                    <div className="newsDesc">{n.desc}</div>
+                                    <div className="newsTitle">{n.data.title}</div>
+                                    <div className="newsDesc">{n.data.s}</div>
                                 </div>
                                 </div>
                             </div>
                             </Link>
                         )
                     }) : null
+            }
+            {
+                this.state.end?
+                <div className="ad">
+                    Advertisement
+                </div>
+                :null
             }
             {
                 this.state.error ?

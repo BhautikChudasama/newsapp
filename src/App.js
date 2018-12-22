@@ -12,8 +12,12 @@ import doneIcon from "./images/round-done_outline-24px.svg";
 import reloadIcon from "./images/round-autorenew-24px.svg";
 import Hammer from "hammerjs";
 import NewsDescription from "./newsDescription/newsDescription";
-import { Router, Route } from 'react-router-dom'
+import { Router, Route, Link } from 'react-router-dom'
 import history from "./history.js";
+import Saved from './Saved/saved';
+import gIcon from "./images/g.svg";
+import * as firebase from "firebase";
+import 'firebase/auth';
 class App extends Component {
   constructor(props) {
     super(props);
@@ -23,17 +27,34 @@ class App extends Component {
       notificationEnable: false,
       uptodate: false,
       isAuth: false,
-      isDesc: null
+      isDesc: null,
+      waitAuth: false,
+      user: null,
     }
   }
-  /**
-   * INFO:
-   * /headline/e/id?from=newsapp&ref=false
-   */
-  r;
   
-
+  r;
   componentDidMount() {
+    var config = {
+      apiKey: "AIzaSyB1d-dYpNywbFpFeASO_2NXpu-1JWN3RUU",
+      authDomain: "firetestondiwali.firebaseapp.com",
+      databaseURL: "https://firetestondiwali.firebaseio.com",
+      projectId: "firetestondiwali",
+      storageBucket: "firetestondiwali.appspot.com",
+      messagingSenderId: "480687354738"
+    };
+    firebase.initializeApp(config);
+    this.setState({
+      waitAuth: true
+    });
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({user: user, isAuth: true, waitAuth: false});
+      } else {
+        this.setState({waitAuth: false});
+      }
+    });
+
     var explore = document.querySelector(".explore");
     var manager = new Hammer(explore);
     manager.on("panup", (e)=> {
@@ -82,7 +103,6 @@ class App extends Component {
       this.setState({ "dataSaver": true })
     }
       if(window.location.pathname == "/") {
-
       this.setState({
         isDesc: false
       }) }
@@ -103,8 +123,9 @@ class App extends Component {
   }
 
   prevStatus = 0;
+
   handleScroll = (e) => {
- 
+      //...
       setTimeout(()=> {
           this.prevStatus = window.scrollY;
       }, 250)
@@ -113,18 +134,12 @@ class App extends Component {
           if(window.location.pathname=="/") {
             document.querySelector(".headerMain").style = "position: relative";
           }
-          else {
-            document.querySelector(".header").style = "position: relative";
-          }
-          
+         
       }
       else {
         if (this.prevStatus > window.scrollY) {
           if(window.location.pathname=="/") {
-            document.querySelector(".headerMain").style = `position: sticky;top:0;animation: scroll 250ms;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.5)`;
-          }
-          else {
-            document.querySelector(".header").style = `position: sticky;top:0;animation: scroll 250ms;     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.5)`;
+            document.querySelector(".headerMain").style = `position: sticky;top:0;animation: scroll 250ms;`;
           }
           
         }
@@ -133,7 +148,7 @@ class App extends Component {
             document.querySelector(".headerMain").style = "display: none";
           }
           else {
-            document.querySelector(".header").style = "display: none";
+            document.querySelector(".header").style="display:  flex;"
           }
         }
 
@@ -209,6 +224,38 @@ class App extends Component {
     }
   }
   
+  letSign() {
+    this.setState({waitAuth: true});
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    firebase.auth().useDeviceLanguage();
+    firebase.auth().signInWithRedirect(provider);
+    firebase.auth().getRedirectResult().then(function (result) {
+      if (result.credential) {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        var token = result.credential.accessToken;
+        // ...
+      }
+      // The signed-in user info.
+      var user = result.user;
+      this.setState({waitAuth: false});
+    }).catch(function (error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // The email of the user's account used.
+      var email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      var credential = error.credential;
+      // ...
+      this.setState({
+        waitAuth: false
+      });
+    });
+  }
+  addtohomescreen() {
+    
+  }
   render() {
    
     const backMenu = {
@@ -234,15 +281,14 @@ class App extends Component {
     }
    
     return (
-    
       <>
       <div className="app" style={this.state.menuOpen ? fix : null}>
       <div className="exploreBackground" onClick={()=>this.closeMenu()} style={this.state.menuOpen?null:none}></div>
-        <Header  now={this.state.isDesc?"/o":"/"}/>
           <Router history={history}>
             <div>
             <Route path="/" component={News} exact></Route>
             <Route path="/:headline/e/:id" component={NewsDescription}></Route>
+            <Route path="/saved" component={Saved}></Route>
             </div>
           </Router>
         
@@ -250,18 +296,24 @@ class App extends Component {
         <div className="explore" style={this.state.menuOpen?forwardMenu:backMenu}>
           <div className="exploreInner">
             <div className="exploreList">
+            {
+              this.state.waitAuth?<div className="progress" style={{right: "8px"}}>
+                  <div className="indeterminate"></div>
+              </div>
+              : null
+            }
               <div className="exploreProfile">
                 {
-                  this.state.isAuth?<div className="signed"><div><div className="profileImage"></div><div style={{paddingLeft: "12px"}}>Bhautik Chudasama</div></div><button className="signOut" style={{marginRight: "17px"}}>Logout</button></div>
+                  this.state.isAuth?<div className="signed"><div><div className="profileImage" style={{backgroundImage: this.state.user.photoURL}}></div><div style={{paddingLeft: "12px"}}>{this.state.user.displayName}</div></div><button className="signOut" style={{marginRight: "17px"}}>Logout</button></div>
                   : 
-                      <div className="notSignin"><img style={{background: "transparent"}} src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/32px-Google_%22G%22_Logo.svg.png" className="profileImage notSign"></img> <div style={{ paddingLeft: "12px" }}>Signin with Google</div></div>
+                      <div className="notSignin" onClick={(e)=>this.letSign()}><img style={{background: "transparent"}} src={gIcon} className="profileImage notSign"></img> <div style={{ paddingLeft: "12px" }}>Signin with Google</div></div>
                 }
                 </div>
-                <button className="othermenubutton"><span className="menuIcon"><img src={homeIcon}></img></span><span style={{ paddingLeft: "16px" }}>Home</span></button>
-                <button className="othermenubutton"><span className="menuIcon"><img src={savedIcon}></img></span><span style={{ paddingLeft: "16px" }}>Saved</span></button>
+                <Router history={history}><Link to="/" className="othermenubutton"><span className="menuIcon" style={{padding: "0 6px"}}><img src={homeIcon}></img></span><span style={{ paddingLeft: "16px" }}>Home</span></Link></Router>
+                <Router history={history}><Link to = "/saved" menu={(e)=>this.closeMenu()} className="othermenubutton" style={{padding: "0 6px"}}><span className="menuIcon"><img src={savedIcon}></img></span><span style={{ paddingLeft: "16px" }}>Saved</span></Link></Router>
                 <button className="othermenubutton bb notPlusIcon" onClick={() => this.saveData()}><div><span className="menuIcon"><img src={saveDataIcon}></img></span><span style={{ paddingLeft: "16px" }}>Data Saving mode</span></div><div className="switch"><div className="switchHead" style={this.state.dataSaver ? headMove : null}></div><div className="switchPath" style={this.state.dataSaver ? pathMove : null}></div></div></button>
                 <button className="othermenubutton notPlusIcon" onClick={() => this.handleNotification()}><div><span className="menuIcon"><img src={notificationIcon}></img></span><span style={{ paddingLeft: "16px" }}>Allow Notifications</span></div><div className="switch"><div className="switchHead" style={this.state.notificationEnable ? headMove : null}></div><div className="switchPath" style={this.state.notificationEnable ? pathMove : null}></div></div></button>
-                <button className="othermenubutton bb"><span className="menuIcon"><img src={homeScreenIcon}></img></span><span style={{ paddingLeft: "16px" }}>Add to Homescreen</span></button>
+                <button className="othermenubutton bb" onClick={(e)=>{this.addtohomescreen()}}><span className="menuIcon"><img src={homeScreenIcon}></img></span><span style={{ paddingLeft: "16px" }}>Add to Homescreen</span></button>
                 <button className="othermenubutton" onClick={()=>this.handleUpdate()}><span className="menuIcon"><img src={this.state.uptodate?doneIcon:reloadIcon}></img></span><span style={{ paddingLeft: "16px" }}>{this.state.uptodate ? "Version 2.2.0": "Reload to Update"}</span></button>
             </div>
           </div>

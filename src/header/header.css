@@ -12,6 +12,8 @@
     letter-spacing: 0.1px;
     z-index: 4;
     position: relative;
+    position: sticky;
+    top: 0;
 }
 .headerMain {
     width: 100%;

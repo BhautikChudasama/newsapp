@@ -21,6 +21,7 @@
   z-index: 4;
 }
 .explore {
+  overflow: hidden;
   width: 100%;
   display: block;
   background: #fff;
