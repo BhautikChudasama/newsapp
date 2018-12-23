@@ -216,17 +216,25 @@ class App extends Component {
     else {
     this.askPermission()
     .then((r)=>{
-      if(localStorage.getItem("ne")=="true") {
-        localStorage.setItem("ne", false);
-        this.setState({ notificationEnable: false });
-        console.log("ENABLE");
-      }
-      else {
-        localStorage.setItem("ne", "d");
-        this.setState({ notificationEnable: false });
+      if(r==="denied") {
+         localStorage.setItem("ne", "d");
+         this.setState({
+           notificationEnable: false
+         });
          this.setState({
            dn: true
          });
+      }
+      else {
+        if(localStorage.getItem("ne")=="true") {
+          localStorage.setItem("ne", false);
+          this.setState({ notificationEnable: false });
+          console.log("ENABLE");
+        }
+        else {
+          localStorage.setItem("ne", true);
+          this.setState({ notificationEnable: true });
+        }
       }
     })
     .catch((e)=>{
