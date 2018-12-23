@@ -43,13 +43,12 @@ class Header extends React.Component{
     render() {
       return (
           <>
-            
-          <div className={this.state.isDesc?"header":"headerMain"} ref={this.state.isDesc?null:"header"} style={this.state.isDesc?{display: "flex", top: "0px"}:null}>
-            <div>
-                newapp
-            </div> 
-        </div>
-        </>
+            <header className={this.state.isDesc?"header":"headerMain"} ref={this.state.isDesc?null:"header"} style={this.state.isDesc?{display: "flex", top: "0px"}:null}>
+                <div>
+                    NewsApp
+                </div> 
+            </header>
+         </>
     )
       }
 };

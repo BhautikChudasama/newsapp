@@ -30,6 +30,7 @@ class App extends Component {
       isDesc: null,
       waitAuth: false,
       user: null,
+      dn: false,
     }
   }
   
@@ -95,6 +96,12 @@ class App extends Component {
        });
        if(localStorage.getItem("ne")=="true") {
          this.setState({"notificationEnable": true})
+       }
+       else if (localStorage.getItem("ne") == "d") {
+           this.setState({
+             "notificationEnable": false,
+             dn: true
+           })
        }
      }
   
@@ -212,13 +219,18 @@ class App extends Component {
       if(localStorage.getItem("ne")=="true") {
         localStorage.setItem("ne", false);
         this.setState({ notificationEnable: false });
+        console.log("ENABLE");
       }
       else {
-        localStorage.setItem("ne", true);
-        this.setState({ notificationEnable: true });
+        localStorage.setItem("ne", "d");
+        this.setState({ notificationEnable: false });
+         this.setState({
+           dn: true
+         });
       }
     })
     .catch((e)=>{
+     
       localStorage.setItem("ne", false);
     })
     }
@@ -230,7 +242,7 @@ class App extends Component {
     provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
     firebase.auth().useDeviceLanguage();
     firebase.auth().signInWithRedirect(provider);
-    firebase.auth().getRedirectResult().then(function (result) {
+    firebase.auth().getRedirectResult().then((result) => {
       if (result.credential) {
         // This gives you a Google Access Token. You can use it to access the Google API.
         var token = result.credential.accessToken;
@@ -239,7 +251,7 @@ class App extends Component {
       // The signed-in user info.
       var user = result.user;
       this.setState({waitAuth: false});
-    }).catch(function (error) {
+    }).catch((error) => {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -253,8 +265,22 @@ class App extends Component {
       });
     });
   }
-  addtohomescreen() {
-    
+  logOut() {
+    this.setState({
+      waitAuth: true,
+      isAuth: true
+    });
+    firebase.auth().signOut().then(()=> {
+     this.setState({
+       waitAuth: false,
+       isAuth: false
+     });
+    },  ()=> {
+      this.setState({
+        waitAuth: false,
+        isAuth: true
+      });
+    });
   }
   render() {
    
@@ -292,7 +318,7 @@ class App extends Component {
             </div>
           </Router>
         
-          <button className="menuButton" onClick={() => this.openMenu()} style={this.state.menuOpen ? none : null}><img src={menu} /><span>Explore</span></button>
+          <button className="menuButton" onClick={() => this.openMenu()} style={this.state.menuOpen ? none : null}><img src={menu} alt="menu" alt="menu"/><span>Explore</span></button>
         <div className="explore" style={this.state.menuOpen?forwardMenu:backMenu}>
           <div className="exploreInner">
             <div className="exploreList">
@@ -304,17 +330,20 @@ class App extends Component {
             }
               <div className="exploreProfile">
                 {
-                  this.state.isAuth?<div className="signed"><div><div className="profileImage" style={{backgroundImage: this.state.user.photoURL}}></div><div style={{paddingLeft: "12px"}}>{this.state.user.displayName}</div></div><button className="signOut" style={{marginRight: "17px"}}>Logout</button></div>
+                  this.state.isAuth?<div className="signed"><div><img className="profileImage" style={{border: "2px solid blue"}} src={this.state.user.photoURL}></img><div style={{paddingLeft: "12px"}}>{this.state.user.displayName}</div></div><button className="signOut" style={{marginRight: "17px"}} onClick={(e)=> this.logOut()}>Logout</button></div>
                   : 
-                      <div className="notSignin" onClick={(e)=>this.letSign()}><img style={{background: "transparent"}} src={gIcon} className="profileImage notSign"></img> <div style={{ paddingLeft: "12px" }}>Signin with Google</div></div>
+                      <div className="notSignin" onClick={(e)=>this.letSign()}><img style={{background: "transparent"}} src={gIcon} className="profileImage notSign" alt="profile photo"></img> <div style={{ paddingLeft: "12px" }}>Signin with Google</div></div>
                 }
                 </div>
-                <Router history={history}><Link to="/" className="othermenubutton"><span className="menuIcon" style={{padding: "0 6px"}}><img src={homeIcon}></img></span><span style={{ paddingLeft: "16px" }}>Home</span></Link></Router>
-                <Router history={history}><Link to = "/saved" menu={(e)=>this.closeMenu()} className="othermenubutton" style={{padding: "0 6px"}}><span className="menuIcon"><img src={savedIcon}></img></span><span style={{ paddingLeft: "16px" }}>Saved</span></Link></Router>
-                <button className="othermenubutton bb notPlusIcon" onClick={() => this.saveData()}><div><span className="menuIcon"><img src={saveDataIcon}></img></span><span style={{ paddingLeft: "16px" }}>Data Saving mode</span></div><div className="switch"><div className="switchHead" style={this.state.dataSaver ? headMove : null}></div><div className="switchPath" style={this.state.dataSaver ? pathMove : null}></div></div></button>
-                <button className="othermenubutton notPlusIcon" onClick={() => this.handleNotification()}><div><span className="menuIcon"><img src={notificationIcon}></img></span><span style={{ paddingLeft: "16px" }}>Allow Notifications</span></div><div className="switch"><div className="switchHead" style={this.state.notificationEnable ? headMove : null}></div><div className="switchPath" style={this.state.notificationEnable ? pathMove : null}></div></div></button>
-                <button className="othermenubutton bb" onClick={(e)=>{this.addtohomescreen()}}><span className="menuIcon"><img src={homeScreenIcon}></img></span><span style={{ paddingLeft: "16px" }}>Add to Homescreen</span></button>
-                <button className="othermenubutton" onClick={()=>this.handleUpdate()}><span className="menuIcon"><img src={this.state.uptodate?doneIcon:reloadIcon}></img></span><span style={{ paddingLeft: "16px" }}>{this.state.uptodate ? "Version 2.2.0": "Reload to Update"}</span></button>
+                <Router history={history}><Link to="/" className="othermenubutton"><span className="menuIcon" style={{padding: "0 6px"}}><img src={homeIcon} alt="Home"></img></span><span style={{ paddingLeft: "16px" }}>Home</span></Link></Router>
+                <Router history={history}><Link to = "/saved" menu={(e)=>this.closeMenu()} className="othermenubutton" style={{padding: "0 6px"}}><span className="menuIcon"><img src={savedIcon} alt="offline"></img></span><span style={{ paddingLeft: "16px" }}>Saved</span></Link></Router>
+                <button className="othermenubutton bb notPlusIcon" onClick={() => this.saveData()}><div><span className="menuIcon"><img src={saveDataIcon} alt="Data saving"></img></span><span style={{ paddingLeft: "16px" }}>Data Saving mode</span></div><div className="switch"><div className="switchHead" style={this.state.dataSaver ? headMove : null}></div><div className="switchPath" style={this.state.dataSaver ? pathMove : null}></div></div></button>
+                <button className="othermenubutton notPlusIcon" onClick={() => this.handleNotification()}><div><span className="menuIcon"><img src={notificationIcon} alt="Notification"></img></span><span style={{ paddingLeft: "16px" }}>Allow Notifications</span></div><div className="switch"><div className="switchHead" style={this.state.notificationEnable ? headMove : null}></div><div className="switchPath" style={this.state.notificationEnable ? pathMove : null}></div></div></button>
+                {
+                  this.state.dn?<div class="disableNotification">Please unblock notifications from browser settings</div>: null
+                }
+                <button className="othermenubutton bb" onClick={()=>this.handleUpdate()}><span className="menuIcon"><img src={this.state.uptodate?doneIcon:reloadIcon} alt="Reaload"></img></span><span style={{ paddingLeft: "16px" }}>{this.state.uptodate ? "Version 2.2.0": "Reload to Update"}</span></button>
+                <button className="othermenubutton"><span className="menuIcon"></span><span style={{ paddingLeft: "16px" }}>Your credentials will be deleted after 24 hours.</span></button>
             </div>
           </div>
         </div>

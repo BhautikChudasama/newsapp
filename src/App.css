@@ -20,6 +20,15 @@
   align-items: center;
   z-index: 4;
 }
+.disableNotification {
+  border-radius: 2px;
+  background-color: rgba(255,67,67,.1);
+  border: 1px solid rgba(255,67,67,.5);
+  padding: 8px;
+  margin-bottom: 15px;
+  font-size: 12px;
+  margin-top: 0;
+}
 .explore {
   overflow: hidden;
   width: 100%;
@@ -62,7 +71,7 @@
   width: 36px;
   height: 34px;
   border-radius: 50%;
-  background: grey;
+  padding: 2px;
 }
 .profileImage.notSign {
   width: auto;

@@ -36,7 +36,6 @@ export default class News extends Component {
             return ;
         }
         else {
-            console.log(this.lts);
             fetch(`https://newsap-frtstondwali.glitch.me/fetch/?lts=${this.lts}`)
                 .then((res) => res.json())
                 .then((json) => {
@@ -84,7 +83,18 @@ export default class News extends Component {
             threshold: 1.0
         });
             
-        io.observe(this.refs.loading)  
+        io.observe(this.refs.loading); 
+
+        //...
+        setInterval(() => {
+            if (localStorage.getItem("dsm") == "true") {
+                this.setState({ IsDataSaver: true });
+            }
+            else {
+                this.setState({ IsDataSaver: false });
+            }
+        }, 1000);
+
     }
     reload = () => {
         window.location.reload();
@@ -102,7 +112,7 @@ export default class News extends Component {
                             <Link to={"/"+n.data.title+"/e/"+n.id} key={`${n.id}`}>
                             <div id={n.id} className="news">
                                 <div className="newsInner">
-                                        <img src={this.state.IsDataSaver == false ? n.data.uri[1].uri : Newsplaceholder} className="newsImage" id={`sid${n.id}`} onLoad={() => { document.querySelector(`#is${n.id}`).style = "display: none"; document.querySelector(`#sid${n.id}`).style = "display: block" }} ></img>
+                                        <img src={this.state.IsDataSaver == false ? n.data.uri[0].uri : Newsplaceholder} className="newsImage" id={`sid${n.id}`} onLoad={() => { document.querySelector(`#is${n.id}`).style = "display: none"; document.querySelector(`#sid${n.id}`).style = "display: block" }} alt="Image"></img>
                                         <img src={Newsplaceholder} className={"imageSkeleton"} id={`is${n.id}`}></img>
                                     <div>
                                     <div className="newsTitle">{n.data.title}</div>

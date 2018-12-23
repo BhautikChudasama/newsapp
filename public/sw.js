@@ -3,7 +3,7 @@ importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.5.0/workbox
 
 if (workbox) {
     console.log(`Yay! Workbox is loaded 🎉`);
-
+    workbox.precaching.precacheAndRoute([]);
     workbox.routing.registerRoute(
         /^https:\/\/fonts\.googleapis\.com/,
         workbox.strategies.staleWhileRevalidate({
@@ -22,7 +22,6 @@ if (workbox) {
              ],
          }),
     )
-    workbox.precaching.precacheAndRoute([]);
 
 } else {
     console.log(`😬 UH!`);

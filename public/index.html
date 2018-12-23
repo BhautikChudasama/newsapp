@@ -5,11 +5,15 @@
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-    <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,600" rel="stylesheet">
-    <title>Newsapp</title>
-    <link rel="preconnect" href="https://img1a.flixcart.com">
-    <link rel="preconnect" href="https://orchid-brian.glitch.me">
+    <title>NewsApp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://newsap-frtstondwali.glitch.me">
+    <link rel="preconnect" href="https://storage.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://newsap-frtstondwali.glitch.me">
+    <link rel="dns-prefetch" href="https://storage.googleapis.com/">
     <meta name="theme-color" content="#1565C0">
+    <meta name="description" content="Newsapp for testing.">
     <style>
       body {
         background: #80808017;
@@ -22,5 +26,20 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+    <div style="width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center" id="icon">
+      <img src="news.svg" alt="Image" id="icon" />
+    </div>
+    <script>
+      window.addEventListener("load", (e)=> {
+        // document.querySelector("#icon").style="display: none";
+      })
+      document.addEventListener("DOMContentLoaded", (e)=> {
+        document.querySelector("#icon").style="display: none";
+         var link = document.createElement("link");
+        link.setAttribute("rel", "stylesheet");
+        link.setAttribute("href", "https://fonts.googleapis.com/css?family=Google+Sans:400,500,600");
+        document.head.appendChild(link);
+      })
+    </script>
   </body>
 </html>
