@@ -102,18 +102,20 @@ export default class News extends Component {
     render() {
         return (
             <div ref="newsMain" className="newsMain">
-            <Header  now={this.state.isDesc?"/o":"/"}/>
+            <Header  now={this.state.isDesc?"/o":"/"} role="Banner"/>
             {
                 this.state.loaded ? null : <HomeSkeleton />
             }
+            <main aria-labelledby="headline" id="headline">
             {
+                    
                     this.state.news.length > 0 ? this.state.news.map((n, i) => {
                         return (
-                            <Link to={"/"+n.data.title+"/e/"+n.id} key={`${n.id}`}>
+                            <Link to={"/"+n.data.title+"/e/"+n.id} key={`${n.id}`} id={"headline "+n.id}>
                             <div id={n.id} className="news">
                                 <div className="newsInner">
                                         <img src={this.state.IsDataSaver == false ? n.data.uri[0].uri : Newsplaceholder} className="newsImage" id={`sid${n.id}`} onLoad={() => { document.querySelector(`#is${n.id}`).style = "display: none"; document.querySelector(`#sid${n.id}`).style = "display: block" }} alt="Image"></img>
-                                        <img src={Newsplaceholder} className={"imageSkeleton"} id={`is${n.id}`}></img>
+                                        <img src={Newsplaceholder} className={"imageSkeleton"} id={`is${n.id}`} alt="Image Not available"></img>
                                     <div>
                                     <div className="newsTitle">{n.data.title}</div>
                                     <div className="newsDesc">{n.data.s}</div>
@@ -121,9 +123,12 @@ export default class News extends Component {
                                 </div>
                             </div>
                             </Link>
+                        
                         )
                     }) : null
+                   
             }
+            </main>
             {
                 this.state.end?
                 <div className="ad">

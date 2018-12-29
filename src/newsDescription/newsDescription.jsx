@@ -4,9 +4,9 @@ import "./newsDescription.css";
 import closeIcon from "../images/round-close-24px (1).svg";
 import unfillheart from "../images/round-favorite_border-24px.svg";
 import filledHeart from "../images/liked.svg";
-import { Router, Route, Link } from 'react-router-dom';
+import { Router, Link } from 'react-router-dom';
 import History from "../history";
-import { parse } from "path";
+
 class NewsDescription extends Component {
     constructor(props) {
         super(props);
@@ -17,6 +17,7 @@ class NewsDescription extends Component {
             data: null,
             datermine: false,
             uc: false,
+            offline: false,
         }
     }
 
@@ -162,18 +163,25 @@ class NewsDescription extends Component {
                 var reqest = wishlistStore.get(id);
                 reqest.onsuccess = (e) => {
                       if(e.target.result===undefined) {
-                          this.setState({ datermine: true, hasLike: false });
+                          
                           fetch(`https://newsap-frtstondwali.glitch.me/pn/?i=${id}`)
                               .then((res) => {
-                                  console.log(res);
+                                  // console.log(res);
                                   res.json()
                                       .then((json) => {
                                           this.setState({ data: json, loaded: true })
+                                          this.setState(
+                                            {
+                                              datermine: true,
+                                              hasLike: false
+                                            }
+                                          );
                                       })
                                 })
                                 .catch((err) => {
-                                    // error occur
+                                    this.setState({offline: true});
                                 })
+                          
                       }
                       else {
                         this.setState({uc: true, data: e.target.result, loaded: true, datermine: true, hasLike: true});
@@ -218,7 +226,7 @@ class NewsDescription extends Component {
                 {   
                         
                         this.state.datermine==true ?
-                        <button className="closeButton" title="Save to offline" onClick={(e) => this.saveToOffline()}><img src={this.state.hasLike ? filledHeart : unfillheart} alt="like" className="like" /></button>
+                        <button className="closeButton" title="Save to offline" onClick={(e) => this.saveToOffline()}><img src={this.state.hasLike ? filledHeart : unfillheart} alt="Save for offline" className="like" /></button>
                         : <div ref="hasLike" className="loading" style={{width: "auto", marginRight: "12px"}}>
                             <div className="loader" style={{width: "18px", height:"18px"}}></div>
                         </div>
@@ -236,12 +244,12 @@ class NewsDescription extends Component {
                             {
                                 this.state.uc?
                                 <>
-                                 <img src={this.state.data.imgs.bi} alt="Image" srcset="" style={{maxWidth: "100%"}} className="ni" onLoad={(e)=> {document.querySelector(".ip").style="display: none"}}/>
+                                 <img src={this.state.data.imgs.bi} alt="News photo" style={{maxWidth: "100%"}} className="ni" onLoad={(e)=> {document.querySelector(".ip").style="display: none"}}/>
                                  <div className="savermode ip"><svg width="81px" height="81px" viewBox="0 0 64 64" fill="red"><path fill="grey" d="M61,1H3C1.895,1,1,1.895,1,3v58c0,1.105,0.895,2,2,2h58c1.105,0,2-0.895,2-2V3C63,1.895,62.105,1,61,1z M24,13c3.314,0,6,2.686,6,6s-2.686,6-6,6s-6-2.686-6-6S20.686,13,24,13z M55.875,50.485C55.698,50.803,55.364,51,55,51H9 c-0.364,0-0.698-0.197-0.875-0.515s-0.166-0.707,0.026-1.015l10-16c0.156-0.25,0.415-0.418,0.706-0.46 c0.289-0.042,0.586,0.046,0.807,0.242l8.188,7.278L39.2,25.4c0.198-0.264,0.515-0.414,0.842-0.399 c0.33,0.014,0.631,0.189,0.806,0.469l15,24C56.041,49.778,56.051,50.167,55.875,50.485z"></path></svg></div>
                                 </>
                                 :
                                 <>
-                                 {this.state.dataSavingMode ? <div className="savermode"><svg width="81px" height="81px" viewBox="0 0 64 64" fill="red"><path fill="grey" d="M61,1H3C1.895,1,1,1.895,1,3v58c0,1.105,0.895,2,2,2h58c1.105,0,2-0.895,2-2V3C63,1.895,62.105,1,61,1z M24,13c3.314,0,6,2.686,6,6s-2.686,6-6,6s-6-2.686-6-6S20.686,13,24,13z M55.875,50.485C55.698,50.803,55.364,51,55,51H9 c-0.364,0-0.698-0.197-0.875-0.515s-0.166-0.707,0.026-1.015l10-16c0.156-0.25,0.415-0.418,0.706-0.46 c0.289-0.042,0.586,0.046,0.807,0.242l8.188,7.278L39.2,25.4c0.198-0.264,0.515-0.414,0.842-0.399 c0.33,0.014,0.631,0.189,0.806,0.469l15,24C56.041,49.778,56.051,50.167,55.875,50.485z"></path></svg></div> : <img src={this.state.data.uri[1].uri} alt="Image" srcset="" style={{maxWidth: "100%"}} className="ni" onLoad={(e)=> {document.querySelector(".ip").style="display: none"}}/> }
+                                 {this.state.dataSavingMode ? <div className="savermode"><svg width="81px" height="81px" viewBox="0 0 64 64" fill="red"><path fill="grey" d="M61,1H3C1.895,1,1,1.895,1,3v58c0,1.105,0.895,2,2,2h58c1.105,0,2-0.895,2-2V3C63,1.895,62.105,1,61,1z M24,13c3.314,0,6,2.686,6,6s-2.686,6-6,6s-6-2.686-6-6S20.686,13,24,13z M55.875,50.485C55.698,50.803,55.364,51,55,51H9 c-0.364,0-0.698-0.197-0.875-0.515s-0.166-0.707,0.026-1.015l10-16c0.156-0.25,0.415-0.418,0.706-0.46 c0.289-0.042,0.586,0.046,0.807,0.242l8.188,7.278L39.2,25.4c0.198-0.264,0.515-0.414,0.842-0.399 c0.33,0.014,0.631,0.189,0.806,0.469l15,24C56.041,49.778,56.051,50.167,55.875,50.485z"></path></svg></div> : <img src={this.state.data.uri[1].uri} alt="Big news" style={{maxWidth: "100%"}} className="ni" onLoad={(e)=> {document.querySelector(".ip").style="display: none"}}/> }
                                  {this.state.dataSavingMode ?null:<div className="savermode ip"><svg width="81px" height="81px" viewBox="0 0 64 64" fill="red"><path fill="grey" d="M61,1H3C1.895,1,1,1.895,1,3v58c0,1.105,0.895,2,2,2h58c1.105,0,2-0.895,2-2V3C63,1.895,62.105,1,61,1z M24,13c3.314,0,6,2.686,6,6s-2.686,6-6,6s-6-2.686-6-6S20.686,13,24,13z M55.875,50.485C55.698,50.803,55.364,51,55,51H9 c-0.364,0-0.698-0.197-0.875-0.515s-0.166-0.707,0.026-1.015l10-16c0.156-0.25,0.415-0.418,0.706-0.46 c0.289-0.042,0.586,0.046,0.807,0.242l8.188,7.278L39.2,25.4c0.198-0.264,0.515-0.414,0.842-0.399 c0.33,0.014,0.631,0.189,0.806,0.469l15,24C56.041,49.778,56.051,50.167,55.875,50.485z"></path></svg></div>}
                                 </>
                              }                                         
@@ -252,16 +260,17 @@ class NewsDescription extends Component {
                         <div className="otherNews">
                             {this.state.data.desc}
                         </div>
-                        <div className="ad">
+                        <div className="ad" role="Banner">
                             Advertisement
                         </div> 
-                        <div className="ad">
+                        <div className="ad" role="Banner">
                             Advertisement
                         </div>
                     </div>
                 </div>: <ExploreNewsSkeleton />
                 }
             </div>
+            
         </>
         )
     }

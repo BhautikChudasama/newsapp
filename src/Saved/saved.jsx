@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import "./saved.css";
 import { Router, Link } from "react-router-dom";
 import history from "../history";
@@ -53,7 +53,7 @@ class Saved extends React.Component {
             <div className={"likeHeader header"}>
                 <Router history={history}>
                     <Link to="/" className="backButton">
-                        <img src={backIcon} alt="" srcset=""/>
+                        <img src={backIcon} alt="Go to Back" className="savetohome"/>
                     </Link>
                 </Router>
                 <div style={{paddingTop: "1px"}}>
@@ -71,7 +71,7 @@ class Saved extends React.Component {
                             <Link to={"/"+n.title+"/e/"+n.id} key={`${n.id}`}>
                                 <div id={n.id} className="news">
                                     <div className="newsInner">
-                                        <img src={this.state.IsDataSaver == false ? n.imgs.bi : Newsplaceholder} className="newsImage" id={`sid${n.id}`} onLoad={() => { document.querySelector(`#is${n.id}`).style = "display: none"; document.querySelector(`#sid${n.id}`).style = "display: block" }} ></img>
+                                        <img src={this.state.IsDataSaver == false ? n.imgs.bi : Newsplaceholder} className="newsImage" id={`sid${n.id}`} onLoad={() => { document.querySelector(`#is${n.id}`).style = "display: none"; document.querySelector(`#sid${n.id}`).style = "display: block" }} alt="Headline"></img>
                                         <img src={Newsplaceholder} className={"imageSkeleton"} id={`is${n.id}`}></img>
                                         <div>
                                             <div className="newsTitle">{n.title}</div>
@@ -87,14 +87,14 @@ class Saved extends React.Component {
                 :
                 <>
                 <div style={{width: "100%", display: "flex", justifyContent: "center"}}>
-                    <img src={noData} alt="No Data" srcset="" class="nosaved" />
+                    <img src={noData} alt="No saved data" class="nosaved" />
                 </div>
                 <div className="noDataDesc">
                     <div style={{display: "block"}}>
                         <p className="maindescnodata">There are no saved data</p>
                         <div style={{width: "100%;", display: "flex", justifyContent: "center"}}>
                             <Router history={history}>
-                                <Link to="/" className="contsread">
+                                <Link to="/" className="contsread" role="Link">
                                     Continue Reading
                                 </Link>
                             </Router>
@@ -102,7 +102,10 @@ class Saved extends React.Component {
                     </div>
                 </div>
                 </>
-                :<HomeSkeleton></HomeSkeleton>
+                : 
+                    import ("../skeletons/home")
+                    .then(ExploreSkeleton=><ExploreSkeleton/>)
+                 
                 }
             </main>
             </>

@@ -1,6 +1,7 @@
 {
   "short_name": "NewsApp",
   "name": "NewsApp",
+  "description": "This is news web app for learning and testing.",
   "icons": [
     {
       "src": "ico192.png",
@@ -13,8 +14,8 @@
       "type": "image/png"
     }
   ],
-  "start_url": ".",
+  "start_url": "/?pwa=true",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#1565c0d6",
   "background_color": "#ffffff"
 }

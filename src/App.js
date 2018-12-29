@@ -12,12 +12,13 @@ import doneIcon from "./images/round-done_outline-24px.svg";
 import reloadIcon from "./images/round-autorenew-24px.svg";
 import Hammer from "hammerjs";
 import NewsDescription from "./newsDescription/newsDescription";
-import { Router, Route, Link } from 'react-router-dom'
+import { Router, Switch, Route, Link } from 'react-router-dom'
 import history from "./history.js";
 import Saved from './Saved/saved';
 import gIcon from "./images/g.svg";
 import * as firebase from "firebase";
 import 'firebase/auth';
+import { width } from 'window-size';
 class App extends Component {
   constructor(props) {
     super(props);
@@ -104,7 +105,33 @@ class App extends Component {
            })
        }
      }
-  
+     if (window.screen.orientation.type === "landscape-primary" && window.innerWidth < 612) {
+       document.querySelector(".explore").style = "width: 50%; height: 90vh; overflow: scroll";
+     }
+     else {
+       if(window.innerWidth > 612) {
+          
+           document.querySelector(".explore").style = "width: 30%; height: auto; overflow: hidden";
+       }
+       else {
+   
+        document.querySelector(".explore").style = "width: 100%; height: auto; overflow: scroll";
+       }
+      }
+     window.screen.orientation.addEventListener('change', (e) => {
+       if(window.screen.orientation.type==="landscape-primary" && window.innerWidth < 612) {
+         document.querySelector(".explore").style = "width: 50%; height: 90vh; overflow: scroll";
+       }
+       else {
+         if (window.innerWidth > 612) {
+
+           document.querySelector(".explore").style = "width: 30%; height: auto; overflow: hidden";
+
+         } else {
+           document.querySelector(".explore").style = "width: 100%; height: auto; overflow: scroll";
+         }
+       }
+     })
     window.addEventListener("scroll", this.handleScroll.bind(this));
     if (localStorage.getItem("dsm") == "true") {
       this.setState({ "dataSaver": true })
@@ -319,14 +346,14 @@ class App extends Component {
       <div className="app" style={this.state.menuOpen ? fix : null}>
       <div className="exploreBackground" onClick={()=>this.closeMenu()} style={this.state.menuOpen?null:none}></div>
           <Router history={history}>
-            <div>
+            <Switch>
             <Route path="/" component={News} exact></Route>
             <Route path="/:headline/e/:id" component={NewsDescription}></Route>
             <Route path="/saved" component={Saved}></Route>
-            </div>
+            </Switch>
           </Router>
         
-          <button className="menuButton" onClick={() => this.openMenu()} style={this.state.menuOpen ? none : null}><img src={menu} alt="menu" alt="menu"/><span>Explore</span></button>
+          <button className="menuButton" role="button" onClick={() => this.openMenu()} style={this.state.menuOpen ? none : null}><img src={menu} alt="menu icon" role="img"/><span>Explore</span></button>
         <div className="explore" style={this.state.menuOpen?forwardMenu:backMenu}>
           <div className="exploreInner">
             <div className="exploreList">
@@ -338,17 +365,17 @@ class App extends Component {
             }
               <div className="exploreProfile">
                 {
-                  this.state.isAuth?<div className="signed"><div><img className="profileImage" style={{border: "2px solid blue"}} src={this.state.user.photoURL}></img><div style={{paddingLeft: "12px"}}>{this.state.user.displayName}</div></div><button className="signOut" style={{marginRight: "17px"}} onClick={(e)=> this.logOut()}>Logout</button></div>
+                  this.state.isAuth?<div className="signed" role="Link"><div><img className="profileImage" style={{border: "2px solid blue"}} src={this.state.user.photoURL} alt="Profile Picture"></img><div style={{paddingLeft: "12px"}}>{this.state.user.displayName}</div></div><button className="signOut" style={{marginRight: "17px"}} role="Button" onClick={(e)=> this.logOut()}>Logout</button></div>
                   : 
-                      <div className="notSignin" onClick={(e)=>this.letSign()}><img style={{background: "transparent"}} src={gIcon} className="profileImage notSign" alt="profile photo"></img> <div style={{ paddingLeft: "12px" }}>Signin with Google</div></div>
+                      <div className="notSignin" onClick={(e)=>this.letSign()}><img style={{background: "transparent"}} src={gIcon} className="profileImage notSign" alt="Google logo"></img> <div style={{ paddingLeft: "12px" }}>Signin with Google</div></div>
                 }
                 </div>
-                <Router history={history}><Link to="/" className="othermenubutton"><span className="menuIcon" style={{padding: "0 6px"}}><img src={homeIcon} alt="Home"></img></span><span style={{ paddingLeft: "16px" }}>Home</span></Link></Router>
+                <Router history={history}><Link to="/" className="othermenubutton"><span className="menuIcon" style={{padding: "0 6px"}}><img src={homeIcon} alt="Home icon"></img></span><span style={{ paddingLeft: "16px" }}>Home</span></Link></Router>
                 <Router history={history}><Link to = "/saved" menu={(e)=>this.closeMenu()} className="othermenubutton" style={{padding: "0 6px"}}><span className="menuIcon"><img src={savedIcon} alt="offline"></img></span><span style={{ paddingLeft: "16px" }}>Saved</span></Link></Router>
                 <button className="othermenubutton bb notPlusIcon" onClick={() => this.saveData()}><div><span className="menuIcon"><img src={saveDataIcon} alt="Data saving"></img></span><span style={{ paddingLeft: "16px" }}>Data Saving mode</span></div><div className="switch"><div className="switchHead" style={this.state.dataSaver ? headMove : null}></div><div className="switchPath" style={this.state.dataSaver ? pathMove : null}></div></div></button>
                 <button className="othermenubutton notPlusIcon" onClick={() => this.handleNotification()}><div><span className="menuIcon"><img src={notificationIcon} alt="Notification"></img></span><span style={{ paddingLeft: "16px" }}>Allow Notifications</span></div><div className="switch"><div className="switchHead" style={this.state.notificationEnable ? headMove : null}></div><div className="switchPath" style={this.state.notificationEnable ? pathMove : null}></div></div></button>
                 {
-                  this.state.dn?<div class="disableNotification">Please unblock notifications from browser settings</div>: null
+                  this.state.dn?<div className="disableNotification">Please unblock notifications from browser settings</div>: null
                 }
                 <button className="othermenubutton bb" onClick={()=>this.handleUpdate()}><span className="menuIcon"><img src={this.state.uptodate?doneIcon:reloadIcon} alt="Reaload"></img></span><span style={{ paddingLeft: "16px" }}>{this.state.uptodate ? "Version 2.2.0": "Reload to Update"}</span></button>
                 <button className="othermenubutton"><span className="menuIcon"></span><span style={{ paddingLeft: "16px" }}>Your credentials will be deleted after 24 hours.</span></button>

@@ -1,8 +1,5 @@
 import React from "react";
 import "./header.css";
-
-
-import { Router, Route, Link } from 'react-router-dom';
 class Header extends React.Component{
     constructor(props) {
         super(props);
