@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import "./saved.css";
 import { Router, Link } from "react-router-dom";
 import history from "../history";
@@ -6,6 +6,10 @@ import backIcon from "../images/outline-arrow_back-24px.svg";
 import HomeSkeleton from "../skeletons/home";
 import Newsplaceholder from "../images/newsplaceholder.png";
 import noData from "../images/undraw_empty_xct9.svg";
+ import ExploreSkeleton from "../skeletons/home.jsx";
+
+
+
 class Saved extends React.Component {
     constructor(props) {
         super(props);
@@ -15,6 +19,7 @@ class Saved extends React.Component {
             IsDataSaver: false,
         }
     }
+    
     componentDidMount() {
         if (localStorage.getItem("dsm") == "true") {
             this.setState({ IsDataSaver: true });
@@ -48,9 +53,10 @@ class Saved extends React.Component {
       }
     }
     render() {
+       const ExploreSkeleton = React.lazy(() => import("../skeletons/home.jsx"));
         return (
             <>
-            <div className={"likeHeader header"}>
+            <div className="likeHeader header">
                 <Router history={history}>
                     <Link to="/" className="backButton">
                         <img src={backIcon} alt="Go to Back" className="savetohome"/>
@@ -103,9 +109,9 @@ class Saved extends React.Component {
                 </div>
                 </>
                 : 
-                    import ("../skeletons/home")
-                    .then(ExploreSkeleton=><ExploreSkeleton/>)
-                 
+                 <Suspense fallback={<div>Loading...</div>}>
+                  <ExploreSkeleton/>
+                 </Suspense>
                 }
             </main>
             </>

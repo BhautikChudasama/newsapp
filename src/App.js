@@ -7,18 +7,17 @@ import homeIcon from "./images/round-home-24px.svg";
 import savedIcon from "./images/round-favorite-24px.svg";
 import saveDataIcon from "./images/round-flash_on-24px.svg";
 import notificationIcon from "./images/round-notifications-24px.svg";
-import homeScreenIcon from "./images/round-add_to_home_screen-24px.svg";
 import doneIcon from "./images/round-done_outline-24px.svg";
 import reloadIcon from "./images/round-autorenew-24px.svg";
 import Hammer from "hammerjs";
 import NewsDescription from "./newsDescription/newsDescription";
-import { Router, Switch, Route, Link } from 'react-router-dom'
+import { Router, Route, Link } from 'react-router-dom'
 import history from "./history.js";
 import Saved from './Saved/saved';
 import gIcon from "./images/g.svg";
-import * as firebase from "firebase";
+import firebase from "firebase";
 import 'firebase/auth';
-import { width } from 'window-size';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -105,6 +104,7 @@ class App extends Component {
            })
        }
      }
+     /*
      if (window.screen.orientation.type === "landscape-primary" && window.innerWidth < 612) {
        document.querySelector(".explore").style = "width: 50%; height: 90vh; overflow: scroll";
      }
@@ -132,6 +132,7 @@ class App extends Component {
          }
        }
      })
+     */
     window.addEventListener("scroll", this.handleScroll.bind(this));
     if (localStorage.getItem("dsm") == "true") {
       this.setState({ "dataSaver": true })
@@ -345,14 +346,13 @@ class App extends Component {
       <>
       <div className="app" style={this.state.menuOpen ? fix : null}>
       <div className="exploreBackground" onClick={()=>this.closeMenu()} style={this.state.menuOpen?null:none}></div>
-          <Router history={history}>
-            <Switch>
+         <Router history={history}>
+            <div>
             <Route path="/" component={News} exact></Route>
             <Route path="/:headline/e/:id" component={NewsDescription}></Route>
             <Route path="/saved" component={Saved}></Route>
-            </Switch>
+            </div>
           </Router>
-        
           <button className="menuButton" role="button" onClick={() => this.openMenu()} style={this.state.menuOpen ? none : null}><img src={menu} alt="menu icon" role="img"/><span>Explore</span></button>
         <div className="explore" style={this.state.menuOpen?forwardMenu:backMenu}>
           <div className="exploreInner">
